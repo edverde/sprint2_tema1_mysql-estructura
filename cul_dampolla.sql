@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-04-2022 a las 21:54:51
+-- Tiempo de generación: 20-04-2022 a las 11:43:04
 -- Versión del servidor: 10.4.22-MariaDB
 -- Versión de PHP: 7.4.27
 
@@ -33,7 +33,9 @@ CREATE TABLE `clients` (
   `CP` int(20) NOT NULL,
   `telefon` int(20) NOT NULL,
   `correo_electronic` varchar(60) NOT NULL,
-  `data_registre` date NOT NULL
+  `data_registre` date NOT NULL,
+  `direccio_id` int(11) NOT NULL,
+  `id_recomendat` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -55,16 +57,28 @@ CREATE TABLE `direccio` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `marca`
+--
+
+CREATE TABLE `marca` (
+  `id_marca` int(11) NOT NULL,
+  `proveidor_id` int(11) NOT NULL,
+  `ulleres_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `proveidor`
 --
 
 CREATE TABLE `proveidor` (
   `id_proveidor` int(11) NOT NULL,
   `nom` varchar(20) NOT NULL,
-  `direccio` varchar(20) NOT NULL,
   `telefon` varchar(20) NOT NULL,
   `fax` varchar(20) NOT NULL,
-  `NIF` varchar(20) NOT NULL
+  `NIF` varchar(20) NOT NULL,
+  `direccio_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -75,14 +89,25 @@ CREATE TABLE `proveidor` (
 
 CREATE TABLE `ulleres` (
   `id_ulleres` int(11) NOT NULL,
-  `marca` varchar(20) NOT NULL,
+  `model` varchar(20) NOT NULL,
   `ull_dret` varchar(40) NOT NULL,
   `ull_esquerra` varchar(40) NOT NULL,
   `tipos` enum('flotant','pasta','metallica','') NOT NULL,
   `color_montura` varchar(20) NOT NULL,
   `color_vidre` varchar(20) NOT NULL,
   `preu` double NOT NULL,
-  `proveidor_id` int(11) NOT NULL
+  `marca_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `venedor`
+--
+
+CREATE TABLE `venedor` (
+  `id_venedor` int(11) NOT NULL,
+  `nom_venedor` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -93,8 +118,10 @@ CREATE TABLE `ulleres` (
 
 CREATE TABLE `venta` (
   `id_venta` int(11) NOT NULL,
-  `nom_venedor` varchar(20) NOT NULL,
-  `data_venta` date NOT NULL
+  `data_venta` date NOT NULL,
+  `ulleres_id` int(11) NOT NULL,
+  `venedor_id` int(11) NOT NULL,
+  `client_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -105,7 +132,9 @@ CREATE TABLE `venta` (
 -- Indices de la tabla `clients`
 --
 ALTER TABLE `clients`
-  ADD PRIMARY KEY (`id_clients`);
+  ADD PRIMARY KEY (`id_clients`),
+  ADD KEY `direccio_id` (`direccio_id`),
+  ADD KEY `id_recomendat` (`id_recomendat`);
 
 --
 -- Indices de la tabla `direccio`
@@ -114,23 +143,42 @@ ALTER TABLE `direccio`
   ADD PRIMARY KEY (`id_direccio`);
 
 --
+-- Indices de la tabla `marca`
+--
+ALTER TABLE `marca`
+  ADD PRIMARY KEY (`id_marca`),
+  ADD KEY `proveidor_id` (`proveidor_id`),
+  ADD KEY `ulleres_id` (`ulleres_id`);
+
+--
 -- Indices de la tabla `proveidor`
 --
 ALTER TABLE `proveidor`
-  ADD PRIMARY KEY (`id_proveidor`);
+  ADD PRIMARY KEY (`id_proveidor`),
+  ADD KEY `direccio_id` (`direccio_id`);
 
 --
 -- Indices de la tabla `ulleres`
 --
 ALTER TABLE `ulleres`
   ADD PRIMARY KEY (`id_ulleres`),
-  ADD UNIQUE KEY `proveidor_id` (`proveidor_id`);
+  ADD UNIQUE KEY `proveidor_id` (`marca_id`),
+  ADD KEY `marca_id` (`marca_id`);
+
+--
+-- Indices de la tabla `venedor`
+--
+ALTER TABLE `venedor`
+  ADD PRIMARY KEY (`id_venedor`);
 
 --
 -- Indices de la tabla `venta`
 --
 ALTER TABLE `venta`
-  ADD PRIMARY KEY (`id_venta`);
+  ADD PRIMARY KEY (`id_venta`),
+  ADD KEY `client_id` (`client_id`),
+  ADD KEY `venedor_id` (`venedor_id`),
+  ADD KEY `ulleres_id` (`ulleres_id`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -140,7 +188,19 @@ ALTER TABLE `venta`
 -- AUTO_INCREMENT de la tabla `clients`
 --
 ALTER TABLE `clients`
-  MODIFY `id_clients` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_clients` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `direccio`
+--
+ALTER TABLE `direccio`
+  MODIFY `id_direccio` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `marca`
+--
+ALTER TABLE `marca`
+  MODIFY `id_marca` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `proveidor`
@@ -155,6 +215,12 @@ ALTER TABLE `ulleres`
   MODIFY `id_ulleres` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `venedor`
+--
+ALTER TABLE `venedor`
+  MODIFY `id_venedor` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de la tabla `venta`
 --
 ALTER TABLE `venta`
@@ -165,10 +231,37 @@ ALTER TABLE `venta`
 --
 
 --
+-- Filtros para la tabla `clients`
+--
+ALTER TABLE `clients`
+  ADD CONSTRAINT `clients_ibfk_1` FOREIGN KEY (`id_recomendat`) REFERENCES `clients` (`id_clients`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `clients_ibfk_2` FOREIGN KEY (`id_clients`) REFERENCES `venta` (`client_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `clients_ibfk_3` FOREIGN KEY (`direccio_id`) REFERENCES `direccio` (`id_direccio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Filtros para la tabla `marca`
+--
+ALTER TABLE `marca`
+  ADD CONSTRAINT `marca_ibfk_1` FOREIGN KEY (`proveidor_id`) REFERENCES `proveidor` (`id_proveidor`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
 -- Filtros para la tabla `proveidor`
 --
 ALTER TABLE `proveidor`
-  ADD CONSTRAINT `proveidor_ibfk_1` FOREIGN KEY (`id_proveidor`) REFERENCES `ulleres` (`proveidor_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `proveidor_ibfk_1` FOREIGN KEY (`direccio_id`) REFERENCES `direccio` (`id_direccio`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Filtros para la tabla `ulleres`
+--
+ALTER TABLE `ulleres`
+  ADD CONSTRAINT `ulleres_ibfk_1` FOREIGN KEY (`marca_id`) REFERENCES `marca` (`ulleres_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Filtros para la tabla `venta`
+--
+ALTER TABLE `venta`
+  ADD CONSTRAINT `venta_ibfk_1` FOREIGN KEY (`ulleres_id`) REFERENCES `ulleres` (`id_ulleres`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `venta_ibfk_2` FOREIGN KEY (`venedor_id`) REFERENCES `venedor` (`id_venedor`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
