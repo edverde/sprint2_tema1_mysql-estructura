@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 22-04-2022 a las 23:09:56
+-- Tiempo de generación: 27-04-2022 a las 19:11:40
 -- Versión del servidor: 10.4.22-MariaDB
 -- Versión de PHP: 7.4.27
 
@@ -131,7 +131,8 @@ CREATE TABLE `ulleres` (
   `ull_esquerra` varchar(40) NOT NULL,
   `tipos` enum('flotant','pasta','metallica','') NOT NULL,
   `color_montura` varchar(20) NOT NULL,
-  `color_vidre` varchar(20) NOT NULL,
+  `color_vidre_esquerra` varchar(20) NOT NULL,
+  `color_vidre_dret` varchar(20) NOT NULL,
   `preu` double NOT NULL,
   `marca_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -140,9 +141,9 @@ CREATE TABLE `ulleres` (
 -- Volcado de datos para la tabla `ulleres`
 --
 
-INSERT INTO `ulleres` (`id_ulleres`, `model`, `ull_dret`, `ull_esquerra`, `tipos`, `color_montura`, `color_vidre`, `preu`, `marca_id`) VALUES
-(1, 'aviator', '15,5', '16', 'pasta', 'negre', 'foscos', 150, 1),
-(2, 'caca dura', '45', '23', 'metallica', 'blanc', 'fosc', 128, 3);
+INSERT INTO `ulleres` (`id_ulleres`, `model`, `ull_dret`, `ull_esquerra`, `tipos`, `color_montura`, `color_vidre_esquerra`, `color_vidre_dret`, `preu`, `marca_id`) VALUES
+(1, 'aviator', '15,5', '16', 'pasta', 'negre', 'foscos', 'foscos', 150, 1),
+(2, 'caca dura', '45', '23', 'metallica', 'blanc', 'fosc', 'fosc', 128, 3);
 
 -- --------------------------------------------------------
 
@@ -273,7 +274,7 @@ ALTER TABLE `proveidor`
 -- AUTO_INCREMENT de la tabla `ulleres`
 --
 ALTER TABLE `ulleres`
-  MODIFY `id_ulleres` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_ulleres` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `venedor`

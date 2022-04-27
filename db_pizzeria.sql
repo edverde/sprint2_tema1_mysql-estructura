@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 24-04-2022 a las 13:07:32
+-- Tiempo de generación: 27-04-2022 a las 19:10:41
 -- Versión del servidor: 10.4.22-MariaDB
 -- Versión de PHP: 7.4.27
 
@@ -96,7 +96,6 @@ CREATE TABLE `comandes` (
   `id_comanda` int(11) NOT NULL,
   `data_hora` datetime DEFAULT NULL,
   `envio` enum('domicili','botiga') DEFAULT NULL,
-  `quantitat_producte` int(11) DEFAULT NULL,
   `preu_total` decimal(4,2) DEFAULT NULL,
   `clients_id` int(11) NOT NULL,
   `empleat_repartidor_id` int(11) NOT NULL,
@@ -108,10 +107,10 @@ CREATE TABLE `comandes` (
 -- Volcado de datos para la tabla `comandes`
 --
 
-INSERT INTO `comandes` (`id_comanda`, `data_hora`, `envio`, `quantitat_producte`, `preu_total`, `clients_id`, `empleat_repartidor_id`, `data_hora_entrega`, `tenda_id`) VALUES
-(1, '2022-04-15 12:53:18', 'domicili', 6, '30.00', 1, 1, '2022-04-23 12:55:18', 2),
-(2, '2022-04-24 12:53:17', NULL, NULL, NULL, 1, 1, '2022-04-24 12:53:17', 2),
-(3, '2022-04-24 12:58:01', NULL, NULL, NULL, 2, 9, '2022-04-24 12:58:01', 5);
+INSERT INTO `comandes` (`id_comanda`, `data_hora`, `envio`, `preu_total`, `clients_id`, `empleat_repartidor_id`, `data_hora_entrega`, `tenda_id`) VALUES
+(1, '2022-04-15 12:53:18', 'domicili', '30.00', 1, 1, '2022-04-23 12:55:18', 2),
+(2, '2022-04-24 12:53:17', NULL, NULL, 1, 1, '2022-04-24 12:53:17', 2),
+(3, '2022-04-24 12:58:01', NULL, NULL, 2, 9, '2022-04-24 12:58:01', 5);
 
 -- --------------------------------------------------------
 
@@ -258,17 +257,18 @@ INSERT INTO `tenda` (`id_tenda`, `direccio`, `cp`, `localitat_id`) VALUES
 
 CREATE TABLE `tipus` (
   `id_tipus` int(11) NOT NULL,
-  `nom` varchar(60) DEFAULT NULL
+  `nom` enum('hamburguesa','beguda','pizza') DEFAULT NULL,
+  `quantitat` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `tipus`
 --
 
-INSERT INTO `tipus` (`id_tipus`, `nom`) VALUES
-(1, 'pizza'),
-(2, 'burguer'),
-(3, 'beguda');
+INSERT INTO `tipus` (`id_tipus`, `nom`, `quantitat`) VALUES
+(1, 'pizza', 0),
+(2, '', 0),
+(3, 'beguda', 0);
 
 --
 -- Índices para tablas volcadas
@@ -397,7 +397,7 @@ ALTER TABLE `localitat`
 -- AUTO_INCREMENT de la tabla `productes`
 --
 ALTER TABLE `productes`
-  MODIFY `id_productes` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_productes` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `provincies`
